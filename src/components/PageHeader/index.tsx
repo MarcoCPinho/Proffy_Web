@@ -7,7 +7,8 @@ import backIcon from '../../assets/images/icons/back.svg';
 import './styles.css';
 
 interface PageHeaderProps {
-    title: string;
+    title: string; /* automaticamente entende que é uma propriedade obrigatória */
+    description?: string; /*o "?:"informa que não uma propriedade obrigatória*/
 }
 
 const PageHeader: React.FunctionComponent<PageHeaderProps> = (props) => {
@@ -22,6 +23,7 @@ const PageHeader: React.FunctionComponent<PageHeaderProps> = (props) => {
 
             <div className="header-content">
                 <strong>{props.title}</strong>
+                { props.description && <p>{props.description}</p> }
 
                 {props.children}
             </div>

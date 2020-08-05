@@ -1,38 +1,91 @@
-import React from 'react';
+import React, { useState, FormEvent } from 'react';
 
 import PageHeader from '../../components/PageHeader';
-import TeacherItem from '../../components/TeacherItem';
+import TeacherItem, { Teacher } from '../../components/TeacherItem';
+import Input from '../../components/Input';
+import Select from '../../components/Select';
+import api from '../../services/api';
 
 import './styles.css';
 
 function TeacherList() {
+    const [teachers, setTeachers] = useState([]);
+
+    const [subject, setSubject] = useState('');
+    const [week_day, setWeekDay] = useState('');
+    const [time, setTime] = useState('');
+
+    async function searchTeachers(event: FormEvent) {
+        event.preventDefault();
+
+        const response = await api.get('classes', {
+            params: {
+                subject,
+                week_day,
+                time
+            }
+        });
+
+        setTeachers(response.data);
+    }
+
     return (
         <div id="page-teacher-list" className="container">
             <PageHeader title="Estes são os proffys disponíveis.">
-                <form id="search-teachers">
-                    <div className="input-block">
-                        <label htmlFor="subject">Matéria</label>
-                        <input type="text" id="subject" />
-                    </div>
+                <form id="search-teachers" onSubmit={searchTeachers}>
+                    <Select
+                        name="subject"
+                        label="Matéria"
+                        value={subject}
+                        onChange={(evento) => { setSubject(evento.target.value) }}
+                        options={[
+                            { value: 'Artes', label: 'Artes' },
+                            { value: 'Biologia', label: 'Biologia' },
+                            { value: 'Ciências', label: 'Ciências' },
+                            { value: 'Educação física', label: 'Educação física' },
+                            { value: 'Física', label: 'Física' },
+                            { value: 'Geografia', label: 'Geografia' },
+                            { value: 'História', label: 'História' },
+                            { value: 'Matemática', label: 'Matemática' },
+                            { value: 'Português', label: 'Português' },
+                            { value: 'Química', label: 'Química' },
+                        ]}
+                    />
 
-                    <div className="input-block">
-                        <label htmlFor="week_day">Dia da semana</label>
-                        <input type="text" id="week_day" />
-                    </div>
+                    <Select
+                        name="week_day"
+                        label="Dia da semana"
+                        value={week_day}
+                        onChange={(evento) => { setWeekDay(evento.target.value) }}
+                        options={[
+                            { value: '0', label: 'Domingo' },
+                            { value: '1', label: 'Segunda-feira' },
+                            { value: '2', label: 'Terça-feira' },
+                            { value: '3', label: 'Quarta-feira' },
+                            { value: '4', label: 'Quinta-feira' },
+                            { value: '5', label: 'Sexta-feira' },
+                            { value: '6', label: 'Sábado' },
+                        ]}
+                    />
 
-                    <div className="input-block">
-                        <label htmlFor="time">Hora</label>
-                        <input type="text" id="time" />
-                    </div>
+                    <Input
+                        type="time"
+                        name="time"
+                        label="Hora"
+                        value={time}
+                        onChange={(evento) => { setTime(evento.target.value) }}
+                    />
+
+                    <button type="submit">
+                        Buscar
+                    </button>
                 </form>
             </PageHeader>
 
             <main>
-                <TeacherItem nome="Marco Pinho" materia="Química" conteudo1="Entusiasta das melhores tecnologias de química avançada." conteudo2="Apaixonado por explodir coisas em laboratório e por mudar a vida das pessoas através de experiências. Mais de 200.000 pessoas já passaram por uma das minhas explosões." valor="R$ 80,00"/>
-
-                <TeacherItem nome="Marco C Pinho" materia="Educação Física" conteudo1="Instrutor de Educação Física para iniciantes, minha missão de vida é levar saúde e contribuir para o crescimento de quem se interessar." conteudo2='Comecei a minha jornada profissional em 2001, quando meu pai me deu dois alteres de 32kg com a seguinte condição: "Aprenda a fazer dinheiro com isso!"' valor="R$ 150,00"/>
-
-                <TeacherItem nome="Marco Carvalho de Pinho" materia="Geografia" conteudo1="As vezes não sei nem onde eu tô, mas consigo me localizar facilmente em qualquer lugar. Tenho memória fotográfica e nunca fico perdido." conteudo2="Eu ensino a galera como não se perder na vida, com lições geográficas simples pra você nunca mais precisar de mapa na sua bela vida." valor="R$ 400,00"/>
+                {teachers.map((teacher: Teacher) => {
+                    return <TeacherItem key={teacher.id} teacher={teacher} />
+                })}
             </main>
         </div>
     )
