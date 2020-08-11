@@ -9,7 +9,7 @@ import api from '../../services/api';
 import './styles.css';
 
 function TeacherList() {
-    const [teachers, setTeachers] = useState([]);
+    const [teachers, setTeachers] = useState([]); /* useEffect(() => {}, [variável X])... o use effect recebe uma função, que é qual função será disparada, e a "variável X" é quando ela é disparada... se deixar em branco este a array, ele vai disparar somente 1 vez quando iniciar a aplicação... se eu colocar alguma variável, toda mudança nesta variável ativa o disparo da função*/
 
     const [subject, setSubject] = useState('');
     const [week_day, setWeekDay] = useState('');
